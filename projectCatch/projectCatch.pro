@@ -28,11 +28,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    detectcv.cpp
+    detectcv.cpp \
+    person.cpp
 
 HEADERS += \
         mainwindow.h \
-    detectcv.h
+    detectcv.h \
+    person.h
 
 FORMS += \
         mainwindow.ui

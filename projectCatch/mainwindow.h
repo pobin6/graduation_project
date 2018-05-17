@@ -23,12 +23,15 @@ private slots:
     void on_pushButton_clicked();
     void update();  //超时处理函数
 
+    void on_pushButton_2_clicked();
+
 private:
     Ui::MainWindow *ui;
     QTimer *m_pTimer;
     QMediaPlayer *player;
     QVideoWidget *videoWidget;
     DetectCV *detectCV;
+    bool isPause = false;
 };
 
 #endif // MAINWINDOW_H
