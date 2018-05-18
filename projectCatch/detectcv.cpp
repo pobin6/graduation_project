@@ -50,11 +50,11 @@ int DetectCV::detectBody(Mat frame,vector<Rect> boundRect)
                 Point center = heightPoint(r);
                 for(int j = 0; j < boundRect.size(); j++)
                 {
-                    if(/*center.x > boundRect[j].x
+                    if(center.x > boundRect[j].x
                             && center.x < boundRect[j].x+boundRect[j].width
-                            &&center.y > boundRect[j].y
+                            && center.y > boundRect[j].y
                             && center.y < boundRect[j].y+boundRect[j].height
-                            &&*/ boundRect[i].width * boundRect[i].height > 5000)
+                            && boundRect[i].width * boundRect[i].height > 5000)
                     {
                         detectDirec(frame, r);
                         QString path2 = "p" + QString::number(n,10) + ".jpg";
