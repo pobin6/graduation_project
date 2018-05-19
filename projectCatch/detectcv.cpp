@@ -56,10 +56,7 @@ int DetectCV::detectBody(Mat frame,vector<Rect> boundRect)
                             && center.y < boundRect[j].y+boundRect[j].height
                             && boundRect[i].width * boundRect[i].height > 5000)
                     {
-                        detectDirec(frame, r);
-                        QString path2 = "p" + QString::number(n,10) + ".jpg";
-                        n++;
-        //                imwrite(path2.toStdString(),Mat(frame,r));
+                        detectDirec2(boundRect[j]);
                         rectangle(frame, r, Scalar(0, 0, 255), 2);
                     }
                 }
@@ -75,7 +72,6 @@ int DetectCV::detectMove(String background)
         QString path = "full-" + QString::number(past,10) + ".jpg";
         Mat back = imread(path.toStdString());
 //        Mat back = imread(background);
-        Mat move = imread(background);
         path = "full-" + QString::number(now,10) + ".jpg";
         Mat frame = imread(path.toStdString());
         Mat result = frame.clone();
@@ -162,53 +158,65 @@ MatND DetectCV::detectND(Mat img)
         return hist_base;
 }
 
-//get direction
-void DetectCV::detectDirec(Mat frame, Rect r)
+//get direction by move
+void DetectCV::detectDirec2(Rect bound)
 {
-        Mat per(frame, r);
-        MatND nd = detectND(per);
-        Point center = heightPoint(r);
-        //search perPoint's key
-        int i;
-        for(i = 0; i < per_nd.size(); i++)
+    int j = 0;
+    for(j = 0; j < per_direc.size(); j++)
+    {
+        Rect a,b,c;
+        a = bound;
+        b = per_direc[j].bound;
+        //get repeat size
+        if((a.x+a.width>b.x) && (a.y+a.height>b.y)&&(b.x+b.width>a.x) && (b.y+b.height>a.y))
         {
-            //用key()和data()分别获取“键”和“值”
-            double base_base = compareHist( per_nd[i], nd, 0 );
-            if(base_base > 0.9)
+            if(a.x > b.x) c.x = a.x;
+            else c.x = b.x;
+            if(a.y > b.y) c.y = a.y;
+            else c.y = b.y;
+            if((a.x+a.width) > (b.x+b.width)) c.width = b.x+b.width - c.x;
+            else c.width = a.x+a.width - c.x;
+            if((a.y+a.height) > (b.y+b.height)) c.height = b.y+b.height - c.y;
+            else c.height = a.y+a.height - c.y;
+
+            int S = c.width * c.height;
+            int as = a.width * a.height;
+            if(as < S * 3)
             {
-//                     per_direc[i].direc = (per_direc[i].x-center.x);
-//                     per_direc[i].direc = per_direc[i].size  - ( r.width * r.height);
-//                     per_direc[i].size = r.width * r.height;
-//                     per_direc[i].x = center.x;
-//                     per_direc[i].y = center.y;
-                     per_direc[i].isAppear = true;
-                     per_direc[i].direc = r.width * r.height;
-                     break;
+                per_direc[j].x2 = a.x;
+                per_direc[j].isAppear = true;
+                per_direc[j].preNum++;
+                break;
             }
         }
-        if (i == per_nd.size())
-        {
-            Person p(center.x, center.y, r.width * r.height);
-            per_nd.append(nd);
-            per_direc.append(p);
-        }
+    }
+    if(j == per_direc.size())
+    {
+        Person p;
+        p.x1 = bound.x;
+        p.x2 = bound.x;
+        p.bound = bound;
+        per_direc.append(p);
+    }
 }
 
 //get person number
 void DetectCV::detecNum()
 {
-        for(int i = 0; i < per_nd.size(); i++)
+        int n = 0;
+        for(int i=0; i<per_direc.length(); i++)
         {
-                if(per_direc[i].isAppear) per_direc[i].lasttimes = 9;
-                else per_direc[i].lasttimes -=1;
-                per_direc[i].isAppear = false;
-                if(per_direc[i].lasttimes < 0)
-                {
-                        if(per_direc[i].direc > per_direc[i].size) per_num++;
-                        else if(per_direc[i].direc < per_direc[i].size) per_num--;
-                        per_direc.removeAt(i);
-                        per_nd.removeAt(i);
-                }
+            if(per_direc[i].isAppear) per_direc[i].times = 9;
+            else per_direc[i].times -=1;
+            per_direc[i].isAppear = false;
+            if(per_direc[i].num < per_direc[i].preNum) per_direc[i].num = per_direc[i].preNum;
+            per_direc[i].preNum = 0;
+            if(per_direc[i].times < 0)
+            {
+                    if(per_direc[i].x1 > per_direc[i].x2) per_num += per_direc[i].num;
+                    else if(per_direc[i].x1 < per_direc[i].x2) per_num -= per_direc[i].num;
+                    per_direc.removeAt(i-n);
+                    n++;
+            }
         }
-        cout << per_num <<endl;
 }

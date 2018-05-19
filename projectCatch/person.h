@@ -1,17 +1,23 @@
 #ifndef PERSON_H
 #define PERSON_H
 
+#include "iostream"
+#include <QMap>
+#include <opencv2/core/core.hpp>
 
+using namespace std;
+using namespace cv;
 class Person
 {
 public:
-    Person(int x, int y, int size);
-    int size = 0;
-    int x = 0;
-    int y = 0;
-    int direc = 0;
-    int lasttimes = 9;
-    bool isAppear = false;
+    Person();
+    int x1= 0;
+    int x2= 0;
+    int num = 1;
+    int preNum = 1;
+    int times = 9;
+    bool isAppear = true;
+    Rect bound;
 };
 
 #endif // PERSON_H

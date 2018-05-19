@@ -25,6 +25,7 @@ public:
     MatND detectND(Mat img);
     Point heightPoint(Rect r);
     void detectDirec(Mat frame, Rect r);
+    void detectDirec2(Rect bound);
     void detecNum();
     /** 全局变量 */
     String PATH = "../../../应用/opencv/opencv-3.3.0/data/haarcascades/";
@@ -34,7 +35,6 @@ public:
     int now = 0;
     int past = 0;
     int per_num = 0;
-    int n = 0;
     QList <MatND> per_nd;
     QList <Person> per_direc;
 };
