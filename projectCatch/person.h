@@ -14,8 +14,9 @@ public:
     int x1= 0;
     int x2= 0;
     int num = 1;
-    int preNum = 1;
+    int preNum = 0;
     int times = 9;
+    int appearTimes = 1;
     bool isAppear = true;
     Rect bound;
 };

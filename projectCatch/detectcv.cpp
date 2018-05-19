@@ -56,13 +56,17 @@ int DetectCV::detectBody(Mat frame,vector<Rect> boundRect)
                             && center.y < boundRect[j].y+boundRect[j].height
                             && boundRect[i].width * boundRect[i].height > 5000)
                     {
-                        detectDirec2(boundRect[j]);
+                        for(int l = 0; l<per_direc.length(); l++)
+                        {
+                            if(per_direc[l].bound.x == boundRect[j].x && per_direc[l].bound.y == boundRect[j].y)
+                                per_direc[j].preNum++;
+                        }
                         rectangle(frame, r, Scalar(0, 0, 255), 2);
                     }
                 }
         }
         //-- 显示结果图像
-        imshow( window_name, frame );
+//        imshow( window_name, frame );
         detecNum();
         return 0;
 }
@@ -105,10 +109,20 @@ int DetectCV::detectMove(String background)
         {
                 boundRect[i] = boundingRect(contours[i]);
         }
-        detectBody(result, boundRect);
-//        imshow(window_name, result);
+        vector<Rect> bounds;
+        for (int i = 0; i < boundRect.size(); i++)
+        {
+            if(boundRect[i].width * boundRect[i].height > 5000)
+            {
+                detectDirec2(boundRect[i]);
+                bounds.push_back(boundRect[i]);
+                rectangle(result, boundRect[i], Scalar(0,0,255),2);
+            }
+        }
+        detectBody(result, bounds);
+        imshow(window_name, result);
 //        detecNum();
-        return contours.size();//返回result
+        return bounds.size();//返回result
 }
 
 //get height point
@@ -185,7 +199,8 @@ void DetectCV::detectDirec2(Rect bound)
             {
                 per_direc[j].x2 = a.x;
                 per_direc[j].isAppear = true;
-                per_direc[j].preNum++;
+                per_direc[j].bound = a;
+                per_direc[j].appearTimes++;
                 break;
             }
         }
@@ -204,17 +219,22 @@ void DetectCV::detectDirec2(Rect bound)
 void DetectCV::detecNum()
 {
         int n = 0;
+        cout << "length: ";
+        cout << per_direc.length()<<endl;
         for(int i=0; i<per_direc.length(); i++)
         {
-            if(per_direc[i].isAppear) per_direc[i].times = 9;
-            else per_direc[i].times -=1;
-            per_direc[i].isAppear = false;
-            if(per_direc[i].num < per_direc[i].preNum) per_direc[i].num = per_direc[i].preNum;
-            per_direc[i].preNum = 0;
-            if(per_direc[i].times < 0)
+            cout << "preNum: ";
+            cout << per_direc[i-n].preNum<<endl;
+            if(per_direc[i-n].isAppear) per_direc[i-n].times = 9;
+            else per_direc[i-n].times -=1;
+            per_direc[i-n].isAppear = false;
+            if(per_direc[i-n].num < per_direc[i-n].preNum) per_direc[i-n].num = per_direc[i-n].preNum;
+            per_direc[i-n].preNum = 0;
+            if(per_direc[i-n].times < 0)
             {
-                    if(per_direc[i].x1 > per_direc[i].x2) per_num += per_direc[i].num;
-                    else if(per_direc[i].x1 < per_direc[i].x2) per_num -= per_direc[i].num;
+                if(per_direc[i-n].appearTimes > 2)
+                    if(per_direc[i-n].x1 > per_direc[i-n].x2) per_num += per_direc[i-n].num;
+                    else if(per_direc[i-n].x1 < per_direc[i-n].x2) per_num -= per_direc[i-n].num;
                     per_direc.removeAt(i-n);
                     n++;
             }
