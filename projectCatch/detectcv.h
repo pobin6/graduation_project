@@ -17,7 +17,7 @@ using namespace std;
 class DetectCV
 {
 public:
-    DetectCV();
+    DetectCV(int x, int y, int width, int height);
     int detectFace();
     int detectBody(Mat frame, vector<Rect> boundRect);
     int detectMove(String  background);
@@ -37,6 +37,7 @@ public:
     int per_num = 0;
     QList <MatND> per_nd;
     QList <Person> per_direc;
+    QScreen *screen;
 };
 
 #endif // DETECTCV_H

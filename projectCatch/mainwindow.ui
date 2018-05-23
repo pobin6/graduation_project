@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>636</width>
-    <height>483</height>
+    <width>669</width>
+    <height>655</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,21 +39,29 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_3">
+          <property name="text">
+           <string>back</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_4">
+          <property name="text">
+           <string>front</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
-       <widget class="QLabel" name="label">
-        <property name="font">
-         <font>
-          <family>Ubuntu</family>
-          <pointsize>40</pointsize>
-         </font>
+       <widget class="QSpinBox" name="spinBox">
+        <property name="minimum">
+         <number>-30</number>
         </property>
-        <property name="text">
-         <string>0</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::AutoText</enum>
+        <property name="value">
+         <number>-1</number>
         </property>
        </widget>
       </item>
@@ -66,7 +74,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>636</width>
+     <width>669</width>
      <height>28</height>
     </rect>
    </property>

@@ -16,8 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     videoWidget = new QVideoWidget();
     player->setVideoOutput(videoWidget);
     ui->verticalLayout->insertWidget(0,videoWidget);
-
-    detectCV = new DetectCV();
+//    ui->horizontalSlider->setMaximum(player->position());
 }
 
 MainWindow::~MainWindow()
@@ -32,8 +31,14 @@ MainWindow::~MainWindow()
 //start simulation
 void MainWindow::on_pushButton_clicked()
 {
-    m_pTimer->start(500);
+    m_pTimer->start(600);
     player->play();
+    int x,y,width, height;
+    x = videoWidget->mapToGlobal(videoWidget->pos()).x();
+    y = videoWidget->mapToGlobal(videoWidget->pos()).y();
+    width = videoWidget->width();
+    height = videoWidget->height();
+    detectCV = new DetectCV(x, y ,width, height);
 }
 
 
@@ -45,14 +50,15 @@ void MainWindow::update()
     width = videoWidget->width();
     height = videoWidget->height();
     //get screen
-    detectCV->FullScreen(x, y, 562, height);
+    detectCV->FullScreen(x, y, width, height);
     //get move
     detectCV->detectMove("../background.jpg");
     //get face
 //    detectCV->detectFace();
     //get body
 //    detectCV->detectBodyr();
-    ui->label->setText(QString::number(detectCV->per_num,10));
+//    ui->label->setText(QString::number(detectCV->per_num,10));
+    ui->spinBox->setValue(detectCV->per_num);
 }
 
 
@@ -69,4 +75,15 @@ void MainWindow::on_pushButton_2_clicked()
             player->pause();
             isPause = true;
         }
+}
+
+
+void MainWindow::on_pushButton_3_clicked()
+{
+        player->setPosition(player->position()-5000);
+}
+
+void MainWindow::on_pushButton_4_clicked()
+{
+        player->setPosition(player->position()+5000);
 }

@@ -1,12 +1,20 @@
 #include "detectcv.h"
 
-DetectCV::DetectCV()
+DetectCV::DetectCV(int x, int y, int width, int height)
 {
         //-- 1. 加载级联分类器文件
         if( !face_cascade.load( face_cascade_name ) )
         {
                 printf("--(!)Error loading\n");
                 cout << face_cascade_name << endl;
+        }
+        screen = QGuiApplication::primaryScreen();
+        for(int i=0; i < 3; i++)
+        {
+            QString filePathName = "full-";
+            filePathName += QString::number(i,10);
+            filePathName += ".jpg";
+            screen->grabWindow(0, x, y, width, height).save(filePathName, "jpg");
         }
 }
 
@@ -54,7 +62,7 @@ int DetectCV::detectBody(Mat frame,vector<Rect> boundRect)
                             && center.x < boundRect[j].x+boundRect[j].width
                             && center.y > boundRect[j].y
                             && center.y < boundRect[j].y+boundRect[j].height
-                            && boundRect[i].width * boundRect[i].height > 5000)
+                            && boundRect[i].width * boundRect[i].height > 20000)
                     {
                         for(int l = 0; l<per_direc.length(); l++)
                         {
@@ -139,7 +147,6 @@ void DetectCV::FullScreen(int x, int y, int width, int height)
 {
         past = now;
         now = ++now%3;
-        QScreen *screen = QGuiApplication::primaryScreen();
         QString filePathName = "full-";
         filePathName += QString::number(now,10);
         filePathName += ".jpg";
@@ -221,11 +228,12 @@ void DetectCV::detecNum()
         int n = 0;
         cout << "length: ";
         cout << per_direc.length()<<endl;
-        for(int i=0; i<per_direc.length(); i++)
+        int l = per_direc.length();
+        for(int i=0; i < l; i++)
         {
-            cout << "preNum: ";
-            cout << per_direc[i-n].preNum<<endl;
-            if(per_direc[i-n].isAppear) per_direc[i-n].times = 9;
+//            cout << "per_direc.length: ";
+//            cout << per_direc[i-n].preNum<<endl;
+            if(per_direc[i-n].isAppear) per_direc[i-n].times = 5;
             else per_direc[i-n].times -=1;
             per_direc[i-n].isAppear = false;
             if(per_direc[i-n].num < per_direc[i-n].preNum) per_direc[i-n].num = per_direc[i-n].preNum;
@@ -233,10 +241,16 @@ void DetectCV::detecNum()
             if(per_direc[i-n].times < 0)
             {
                 if(per_direc[i-n].appearTimes > 2)
+                {
+                    cout << "x1: ";
+                    cout << per_direc[i-n].x1 << endl;
+                    cout << "x2: ";
+                    cout << per_direc[i-n].x2 << endl;
                     if(per_direc[i-n].x1 > per_direc[i-n].x2) per_num += per_direc[i-n].num;
                     else if(per_direc[i-n].x1 < per_direc[i-n].x2) per_num -= per_direc[i-n].num;
-                    per_direc.removeAt(i-n);
-                    n++;
+                }
+                per_direc.removeAt(i-n);
+                n++;
             }
         }
 }
